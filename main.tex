@@ -1,0 +1,278 @@
+\documentclass[twoside,11pt]{article}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{amsmath,amsfonts,amsthm,fullpage}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{url, apacite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\graphicspath{ {../data/} }
+\newcommand{\Fa}{$\mathbf{F_a}$}
+\newcommand{\Fb}{$\mathbf{F_b}$}
+\newcommand{\Fi}[1]{$\mathbf{F_{#1}}$}
+
+\begin{document}
+
+\title{CS6491-2015 P3: Worm}
+\author{Xiong Ding, Subhajit Das}
+\date{}
+\maketitle
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.9in]{selfie}
+    \includegraphics[width=1.0in]{das_PIC}
+\end{figure}
+
+
+%----------------------------------------------------------------------------------
+\section{Objective}
+Our objectives are the following:
+ \begin{enumerate}
+\item Animate a morph between two input curves 
+\item Compute and display the inflation - “minimal” tube tangent to both input curves
+ \end{enumerate}
+
+
+\section{Definitions and input}
+Given two Curves $ A $ and $ B $ both sharing common start and end points in a 3D space. In order to make the morph between these curves,we will compute the medial curve $ C $ by computing the medial points $ M_1, M_2, M_3 ......M_N $.
+Subsequently, we would make transverse curves in the form of series of Parabolas spaced $ D/2 $ distance from each other, considering the two input curves can accommodate a sphere or ball of radius $ r $ in between them. Here, $D$ is the diameter of the biggest circle tangential to both curves $A$ and $B$.
+
+\section{Approach}
+\subsection{Definition of curves and the tangent vector}
+Both curves $A$ and $B$ are controlled by 5 control points  $\{ct_1, ct_2, ct_3, ct_4, ct_5\}$ individually to form a quintic B\'ezier curve, which has an explicit formula:
+\begin{equation}
+  \label{eq:1}
+  P(t) = (1-t)^4 P_0 + 4(1-t)^3t P_1 + 6(1-t)^2 t^2 P_2 + 4(1-t)t^3 P_3 + t^4 P_4 
+\end{equation}
+It's derivative is 
+\begin{equation}
+  \label{eq:2}
+  P'(t) = 4(1-t)^3 (P_1 - P_0) + 12(1-t)^2t (P_2 - P_1) + 12(1-t)t^2 (P_3 - P_2) + 4t^3(P_4 - P_3)
+\end{equation}
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=06in]{twoCurves.png}
+    \caption{Shows two quintic bezier curve with 5 control points}
+\end{figure}
+
+The curves are formed by computing the central points of the Ball with diameter $D$. The points on the curves are obtained by Linear Interpolation as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+$ x = L(ct_0,s,ct_1)$   $ y = L(ct_1,s,ct_2) $ \\  
+$ z = L(ct_2,s,ct_3)$   $ w = L(ct_3,s,ct_4) $\\
+$ xx = L(x,s,y)     $   $ yy = L(y,s,z)$ $ zz = L(z,s,w)$\\
+$ xxx = L(xx,s,yy)$\\
+$ yyy = L(yy,s,zz)$\\
+$ cPt = L(xxx,s,yyy)$\\
+\end{aligned}
+\end{equation}
+where,
+$ct_0,ct_1 ... $ etc are the control points of the curves and 
+$cPt$ is the point on the quintic Bezier Curve.
+
+
+
+\subsection{Calculate the First Median Point on the Medial Curve}
+
+Let $A_0$ be the start point of both curves $A$ and $B$ and  medial curve $C$. From the parametric equation given in \ref{eq:1} we found two points $A_1$ and $B_1$ on curves $A$ and $B$ respectively very close to start point $A_0$.
+We first calculate the Angle Bisector Vector $AB$ as below:
+\begin{equation}
+  \label{eq:4}
+   \begin{aligned}
+&$Vector A1 = V(A_0,A_1)$\\
+&$Vector B1 = V(A_0,B_1)$\\
+&$Vector BS = A(A_1,B_1)$\\
+\end{aligned}
+\end{equation}
+
+Now we need to compute the first median point $M_0$ on this Vector $BS$. That is given by the following equation,
+\begin{equation}
+  \label{eq:5}
+M_0 = P(A_0,dis,BS)
+\end{equation}
+
+where $dis$ is the minimum value of $D/2$, magnitude($A1$) or magnitude($B1$)
+Here,$D$ is the diameter of the fitting ball between curves $A$ and $B$, such that it is tangential to both the curves.
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=05in]{bisector.png}
+    \caption{Shows two quintic bezier curve with 5 control points}
+\end{figure}
+
+\subsection{Calculate the next median Point by guessing}
+
+Calculate the tangent vectors $tanV_1$ and $tanV_2$ at points $A_1$ and $B_1$ respectively as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+c_1 = 4*(1-t)^3
+c_2 =12*(1-t)^2*t
+c_3 =12*(1-t)*t^2
+c_4 = t^3\\
+
+Vector $v1$ = V($ct_0$,$ct_1$)\\
+Vector $v2$ = V($ct_1$,$ct_2$)\\
+Vector $v3$ = V($ct_2$,$ct_3$)\\
+Vector $v4$ = V($ct_3$,$ct_4$)\\
+Vector $tanV_1$ = ($c_1$*v1+$c_2$*v2) + ($c_3$*v3 + $c_4$*v4)
+\end{aligned}
+\end{equation}
+
+where $tanV_1$ is the calculated tangent vector. We can compute $tanV_2$, the respective tangent vectors at point $A_1$ and $B_1$ using aforementioned principles.
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=06in]{intersection.png}
+    \caption{Shows the two bisection point obtained by computing the normal Vector $N$}
+\end{figure}
+We compute the Bisection between the tangent vectors $tanV_1$ and $tanV_2$ and find two points on the bisector by the following calculation:
+
+First, we get the normalized normal Vector $\underline{N}$:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+    Vector $\underline{N}$ = $tanV_1$ x $tanV_2$\\
+Vector $\underline{NN}$ = $N$/||$N$||
+    
+\end{aligned}
+\end{equation}
+
+We get the vector $A1B1$ between points $A_1$ and $B_1$. Also we compute the normalized perpendicular vector $K$ by taking cross product between $tanV_1$ and vector $N$. This allows to compute the point $P1$ as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+float $ val$ = dot($A1B1$$,$K$)/dot($tanV_1$,$K$)\\
+Point $ P1$ = P($B_1$,val,$tanV_2$)
+    
+\end{aligned}
+\end{equation}
+
+We do the same to find the other point $P2$.
+
+We add the points $P1$ and $P2$ to find the middle point $P3$. Also we add the normalized $tanV_1$ vector and normalized $tanV_2$ vector to get vector $V$. This helps us find $P4$ as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+Point $ P4$ = P($P3$,$V$)
+\end{aligned}
+\end{equation}
+
+Thus the final points we obtained from computing the bisection are $P3$ and $P4$. We use these points to compute the Vector $t$ between them and thus we get the guessed Median Point $MG_1$ as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+Point $MG_1$ = P($M_0$,$D/2,$t$)
+\end{aligned}
+\end{equation}
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=04in]{parallelTransp.png}
+    \caption{Shows the concept of parallel transport to find the next Median Point based on the current one}
+\end{figure}
+
+\subsection{Update the median point based on the Guess}
+
+Even though we have the guessed median point, we know that its not precise. To compute the new median point from the guessed median point, we first find the projection of point $MG_1$ on curve $A$ and $B$ respectively.
+
+%Finding the projection
+To find the projection we shoot rays to each of the center point of the balls of the curve $A$ and find the ray with least distance $dis1$, to the point $MG_1$. 
+
+Then if it is not the first point on the curve on the curve, then we check the projection side of the point $MG_1$ to the line between center balls points $c[id-1]$ and $c[id]$. We check to find if its on the line. If it is on the line , then we re compute the projection of point $MG_1$ on the $line(c[id-1],c[id])$ and compute the new distance $dis2$.
+
+Similarly if it is not the last point on the curve, then we check the projection side of the point $MG_1$ to the line between center balls points $c[id]$ and $c[id+1]$. We check to find if its on the line. If it is on the line , then we re compute the projection of point $MG_1$ on the $line(c[id],c[id+1])$ and compute the new distance $dis3$.
+
+We compare the three distances $dis1, dis2 & dis3$ and get the projected point $PA_1$ which has the least value.We do the same process for curve $B$ and find the projected point $PB_1$.
+
+Likewise, we also calculate the tangent vectors $tanPA_1$ and $tanPB_1$ at points $PA_1$ and $PB_1$ respectively. At this point with the help of these two points and tangent vectors, we call the bisection method as explained above to compute the two bisected points $BB1$ and $BB2$.
+
+We create a line between $BB1$ and $BB2$ and find the projection of $MG_1$ on this line which is basically the updated median point as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+Point $ M_1$ = project($MG_1$,$BB1$,$BB2$)
+\end{aligned}
+\end{equation}
+
+
+
+\subsection{Calculate the Median Line}
+Computing the median lines needs computation of all the median points. We can get the First Median Point and the next Median Point as aforementioned. We iterate the computation part of guessing the next median and updating the same point with precision by feeding last computed median point as the first median point at each iteration. We keep a check such that the distance between the last median point and the end center point of the curve should be lesser than $D/2$.
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+while ( n(V(last.M, A.C[A.n-1])) > D/2 && i < 70){\\
+Point $ p$ = guessNextMedian()\\
+Point $ pnew$ = updateMedianPoint()\\
+}
+\end{aligned}
+\end{equation}
+
+\section{Implementation details and some cautions}
+
+\subsection{Class Nearest}
+This Class in rope.pde contains the data structure to store the closest projection in a rope to a certain point. It stores, the projection point, projection distance, the id of the projected point and whether the point is in the middle of an edge.
+
+\subsection{Class Median}
+This Class in rope.pde creates the data structure to save the median point $P$ with two other Nearest Objects, storing the respective nearest points on each Curve $A$ and $B$. 
+
+All the medians are stored in an arraylist $mps$
+
+\subsection{Class Rope}
+The given class rope is used to make a new $MPS$ object which is the median curve. we implement the computation of curve points in the function $calRope()$ under rope.pde.Likewise we implemented $calTangent()$ to compute the tangent vectors at any point on the curve.
+
+The projection of any point on the curve is implemented in $calProject()$ function which returns a Nearest object. It takes the id of the point on the curve and the external point to be projected as input.
+
+\subsection{Median Point Implementation}
+The function $calfirstMedian()$ computes the first median point by taking three points as input.
+
+The function $guessNextMedian()$ returns the next best guessed median point on the median curve by taking the last computed median point as an input
+
+The function $updateMedianPoint()$ returns the precise next median point on the median curve by taking the guessed median point as input along with the id's of the last projected points on the left and right curve.
+
+
+\subsection{Median Curve Implementation}
+
+The function $calMedian()$ iterates to compute the first median point, guessed median point and updated median point repeatedly, till the length of the median curve cannot fit any new median point to make the curve.
+
+
+
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=06in]{ssAnim.png}
+    \caption{Screenshot of the animating morph via the median curve from Curve A to B}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Man-made structure}
+
+\section{Conclusion, discussion and reliability}
+
+\end{document}
