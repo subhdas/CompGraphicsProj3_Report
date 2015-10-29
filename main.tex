@@ -31,19 +31,31 @@
 \section{Objective}
 Our objectives are the following:
  \begin{enumerate}
+<<<<<<< HEAD
  \item Compute the median (average) curve between two input curves in a 3D space.
+=======
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \item Animate a morph between two input curves 
 \item Compute and display the inflation - “minimal” tube tangent to both input curves
  \end{enumerate}
 
 
 \section{Definitions and input}
+<<<<<<< HEAD
 Given two curves $ A $ and $ B $ both sharing common start and end points in a 3D space. In order to make the morph between these curves,we will compute the medial curve $ C $ by computing the medial points $ M_1, M_2, M_3 ......M_N $.
 Subsequently, we would make transverse curves in the form of a series of Arcs spaced at a combined distance of $D$ on each input curve, considering the two input curves can accommodate a sphere or ball of radius $ r $ in between them. Here, $D$ is the diameter of the biggest circle tangential to both curves $A$ and $B$.
 
 \section{Approach}
 \subsection{Definition of curves and the tangent vector}
 Both curves $A$ and $B$ are controlled by 5 control points  $\{P_0, P_1, P_2, P_3, P_4\}$ individually to form a quintic B\'ezier curve, which has an explicit formula:
+=======
+Given two Curves $ A $ and $ B $ both sharing common start and end points in a 3D space. In order to make the morph between these curves,we will compute the medial curve $ C $ by computing the medial points $ M_1, M_2, M_3 ......M_N $.
+Subsequently, we would make transverse curves in the form of series of Parabolas spaced $ D/2 $ distance from each other, considering the two input curves can accommodate a sphere or ball of radius $ r $ in between them. Here, $D$ is the diameter of the biggest circle tangential to both curves $A$ and $B$.
+
+\section{Approach}
+\subsection{Definition of curves and the tangent vector}
+Both curves $A$ and $B$ are controlled by 5 control points  $\{ct_1, ct_2, ct_3, ct_4, ct_5\}$ individually to form a quintic B\'ezier curve, which has an explicit formula:
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \begin{equation}
   \label{eq:1}
   P(t) = (1-t)^4 P_0 + 4(1-t)^3t P_1 + 6(1-t)^2 t^2 P_2 + 4(1-t)t^3 P_3 + t^4 P_4 
@@ -60,12 +72,45 @@ It's derivative is
     \caption{Shows two quintic bezier curve with 5 control points}
 \end{figure}
 
+<<<<<<< HEAD
 The curves are formed by computing the central points of the Ball with diameter $D$. The points on the curves are obtained by Linear Interpolation.
+=======
+The curves are formed by computing the central points of the Ball with diameter $D$. The points on the curves are obtained by Linear Interpolation as below:
+
+\begin{equation}
+  \label{eq:3}
+  \begin{aligned}
+$ x = L(ct_0,s,ct_1)$   $ y = L(ct_1,s,ct_2) $ \\  
+$ z = L(ct_2,s,ct_3)$   $ w = L(ct_3,s,ct_4) $\\
+$ xx = L(x,s,y)     $   $ yy = L(y,s,z)$ $ zz = L(z,s,w)$\\
+$ xxx = L(xx,s,yy)$\\
+$ yyy = L(yy,s,zz)$\\
+$ cPt = L(xxx,s,yyy)$\\
+\end{aligned}
+\end{equation}
+where,
+$ct_0,ct_1 ... $ etc are the control points of the curves and 
+$cPt$ is the point on the quintic Bezier Curve.
+
+
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 
 \subsection{Calculate the First Median Point on the Medial Curve}
 
 Let $A_0$ be the start point of both curves $A$ and $B$ and  medial curve $C$. From the parametric equation given in \ref{eq:1} we found two points $A_1$ and $B_1$ on curves $A$ and $B$ respectively very close to start point $A_0$.
+<<<<<<< HEAD
 We first calculate the Angle Bisector Vector $BS$ by summing the vectors $A$ and $B$ and dividing by 2.
+=======
+We first calculate the Angle Bisector Vector $AB$ as below:
+\begin{equation}
+  \label{eq:4}
+   \begin{aligned}
+&$Vector A1 = V(A_0,A_1)$\\
+&$Vector B1 = V(A_0,B_1)$\\
+&$Vector BS = A(A_1,B_1)$\\
+\end{aligned}
+\end{equation}
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 
 Now we need to compute the first median point $M_0$ on this Vector $BS$. That is given by the following equation,
 \begin{equation}
@@ -73,8 +118,13 @@ Now we need to compute the first median point $M_0$ on this Vector $BS$. That is
 M_0 = P(A_0,dis,BS)
 \end{equation}
 
+<<<<<<< HEAD
 where $dis$ is the minimum value of $D/2$, magnitude($A1$) or magnitude($B1$).
 Here,$D$ is the diameter of the fitting ball between input curves $A$ and $B$, such that it is tangential to both the curves.
+=======
+where $dis$ is the minimum value of $D/2$, magnitude($A1$) or magnitude($B1$)
+Here,$D$ is the diameter of the fitting ball between curves $A$ and $B$, such that it is tangential to both the curves.
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 
 \begin{figure} [t]
     \centering
@@ -89,6 +139,7 @@ Calculate the tangent vectors $tanV_1$ and $tanV_2$ at points $A_1$ and $B_1$ re
 \begin{equation}
   \label{eq:3}
   \begin{aligned}
+<<<<<<< HEAD
 c_1 &= 4*(1-t)^3\\
 c_2 &=12*(1-t)^2*t\\
 c_3 &=12*(1-t)*t^2\\
@@ -99,6 +150,22 @@ Vector $ tanV_1$& = ($c_1$*v1+$c_2$*v2) + ($c_3$*v3 + $c_4$*v4)
 where, $v1, v2, v3$ $ and$ $ v4$ are the vectors between the respective control points $P_0, P_1, P_2, P_3, P_4$.
 
 Here, $tanV_1$ is the calculated tangent vector. We can compute $tanV_2$, the respective tangent vectors at point $A_1$ and $B_1$ using aforementioned principles.
+=======
+c_1 = 4*(1-t)^3
+c_2 =12*(1-t)^2*t
+c_3 =12*(1-t)*t^2
+c_4 = t^3\\
+
+Vector $v1$ = V($ct_0$,$ct_1$)\\
+Vector $v2$ = V($ct_1$,$ct_2$)\\
+Vector $v3$ = V($ct_2$,$ct_3$)\\
+Vector $v4$ = V($ct_3$,$ct_4$)\\
+Vector $tanV_1$ = ($c_1$*v1+$c_2$*v2) + ($c_3$*v3 + $c_4$*v4)
+\end{aligned}
+\end{equation}
+
+where $tanV_1$ is the calculated tangent vector. We can compute $tanV_2$, the respective tangent vectors at point $A_1$ and $B_1$ using aforementioned principles.
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 
 \begin{figure} [t]
     \centering
@@ -112,8 +179,13 @@ First, we get the normalized normal Vector $\underline{N}$:
 \begin{equation}
   \label{eq:3}
   \begin{aligned}
+<<<<<<< HEAD
     Vector $\underline{N}$ &= $tanV_1$ x $tanV_2$\\
 Vector $\underline{NN}$ &= $N$/||$N$||
+=======
+    Vector $\underline{N}$ = $tanV_1$ x $tanV_2$\\
+Vector $\underline{NN}$ = $N$/||$N$||
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
     
 \end{aligned}
 \end{equation}
@@ -123,8 +195,14 @@ We get the vector $A1B1$ between points $A_1$ and $B_1$. Also we compute the nor
 \begin{equation}
   \label{eq:3}
   \begin{aligned}
+<<<<<<< HEAD
 float $ val$ &= dot($A_1B_1$,$ K$)/dot($tanV_1$,$K$)\\
 Point $ P1$ &= P($B_1$,$val$,$ tanV_2$)
+=======
+float $ val$ = dot($A1B1$$,$K$)/dot($tanV_1$,$K$)\\
+Point $ P1$ = P($B_1$,val,$tanV_2$)
+    
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \end{aligned}
 \end{equation}
 
@@ -144,7 +222,11 @@ Thus the final points we obtained from computing the bisection are $P3$ and $P4$
 \begin{equation}
   \label{eq:3}
   \begin{aligned}
+<<<<<<< HEAD
 Point $ MG_1$ = P($M_0$,$D/2,$t$)
+=======
+Point $MG_1$ = P($M_0$,$D/2,$t$)
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \end{aligned}
 \end{equation}
 
@@ -193,6 +275,7 @@ Point $ pnew$ = updateMedianPoint()\\
 \end{aligned}
 \end{equation}
 
+<<<<<<< HEAD
 
 \begin{figure} [t]
     \centering
@@ -283,6 +366,8 @@ $ Point PT[][] = Point ((C_i+C_i_+_1),c,I,s,J)$
 We use these set of points to form the shape for the worm, which is essentially a series of circular quads having radius $r$ such that both curves $A$ and $B$ are tangential to it.
 
 
+=======
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \section{Implementation details and some cautions}
 
 \subsection{Class Nearest}
@@ -310,6 +395,7 @@ The function $updateMedianPoint()$ returns the precise next median point on the 
 
 The function $calMedian()$ iterates to compute the first median point, guessed median point and updated median point repeatedly, till the length of the median curve cannot fit any new median point to make the curve.
 
+<<<<<<< HEAD
 \subsection{Parallel Transport & Worm Implementation}
 
 The function $showQuad()$ under Ropes.pde implements the parallel transport. Both full worm and half worm structure is implemented by the $showWorm()$ function to be found in Ropes.pde.
@@ -334,11 +420,20 @@ We can control the output as below \begin{enumerate}
 \begin{figure} [H]
     \centering
     \includegraphics[width=04in]{ssAnim.png}
+=======
+
+
+
+\begin{figure} [t]
+    \centering
+    \includegraphics[width=06in]{ssAnim.png}
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
     \caption{Screenshot of the animating morph via the median curve from Curve A to B}
 \end{figure}
 
 
 
+<<<<<<< HEAD
 \begin{figure} [H]
     \centering
     \includegraphics[width=04in]{wormFull.png}
@@ -386,10 +481,26 @@ Though our implementation gives good result for the most part and successfully o
 \end{figure}
 
 Another similar problem was observed in the graphical representation of the halfworm structure. When the input curves are manipulated such that they overlap each other and entangle, the half worm structure ends up forming only on one half of the area as shown in Figure ~\ref{fig:halfWorm2}
+=======
 
 
 
 
+
+
+
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
+
+
+
+
+<<<<<<< HEAD
 
 \section{Conclusion, discussion and reliability}
+=======
+\section{Man-made structure}
+
+\section{Conclusion, discussion and reliability}
+
+>>>>>>> 3592afd54f610d94f88f1eabfffad84726c4f304
 \end{document}
